@@ -4,7 +4,7 @@ import { UnrecognizedLinkError } from "./utils/errors";
 export type ParsedLink =
   | { platform: "imessage"; to: string; body?: string }
   | { platform: "sms"; to: string; body?: string }
-  | { platform: "facetime"; to: string; mode: "video" | "audio" }
+  | { platform: "facetime"; to: string; mode: "video" | "audio"; prompt: boolean }
   | { platform: "whatsapp"; to: string; body?: string; variant: "universal" | "scheme" }
   | { platform: "telegram"; to: string; body?: string; variant: "universal" | "scheme" };
 
@@ -97,12 +97,28 @@ export function parseLink(uri: string): ParsedLink {
     throwUnrecognized(uri);
   }
 
+  if (url.protocol === "facetime-audio-prompt:") {
+    const to = url.pathname;
+    if (to === "") {
+      throwUnrecognized(uri);
+    }
+    return { platform: "facetime", to, mode: "audio", prompt: true };
+  }
+
   if (url.protocol === "facetime-audio:") {
     const to = url.pathname;
     if (to === "") {
       throwUnrecognized(uri);
     }
-    return { platform: "facetime", to, mode: "audio" };
+    return { platform: "facetime", to, mode: "audio", prompt: false };
+  }
+
+  if (url.protocol === "facetime-prompt:") {
+    const to = url.pathname;
+    if (to === "") {
+      throwUnrecognized(uri);
+    }
+    return { platform: "facetime", to, mode: "video", prompt: true };
   }
 
   if (url.protocol === "facetime:") {
@@ -110,7 +126,7 @@ export function parseLink(uri: string): ParsedLink {
     if (to === "") {
       throwUnrecognized(uri);
     }
-    return { platform: "facetime", to, mode: "video" };
+    return { platform: "facetime", to, mode: "video", prompt: false };
   }
 
   if (url.protocol === "https:") {

@@ -15,7 +15,10 @@ console.log(parseLink("sms:+14155551234?body=hello"));
 // { platform: "sms", to: "+14155551234", body: "hello" }
 
 console.log(parseLink("facetime:+14155551234"));
-// { platform: "facetime", to: "+14155551234", mode: "video" }
+// { platform: "facetime", to: "+14155551234", mode: "video", prompt: false }
+
+console.log(parseLink("facetime-audio-prompt:user@icloud.com"));
+// { platform: "facetime", to: "user@icloud.com", mode: "audio", prompt: true }
 
 console.log(parseLink("https://wa.me/14155551234?text=hi"));
 // { platform: "whatsapp", to: "+14155551234", body: "hi", variant: "universal" }

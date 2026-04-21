@@ -44,6 +44,7 @@ describe("parseLink", () => {
         platform: "facetime",
         to: "+14155551234",
         mode: "video",
+        prompt: false,
       });
     });
 
@@ -52,6 +53,25 @@ describe("parseLink", () => {
         platform: "facetime",
         to: "user@icloud.com",
         mode: "audio",
+        prompt: false,
+      });
+    });
+
+    it("parses facetime-prompt (video prompt)", () => {
+      expect(parseLink("facetime-prompt:+14155551234")).toEqual({
+        platform: "facetime",
+        to: "+14155551234",
+        mode: "video",
+        prompt: true,
+      });
+    });
+
+    it("parses facetime-audio-prompt (audio prompt)", () => {
+      expect(parseLink("facetime-audio-prompt:user@icloud.com")).toEqual({
+        platform: "facetime",
+        to: "user@icloud.com",
+        mode: "audio",
+        prompt: true,
       });
     });
 
@@ -189,6 +209,7 @@ describe("parseLink", () => {
         platform: "facetime",
         to: opts.to,
         mode: "video",
+        prompt: false,
       });
     });
 
@@ -199,6 +220,7 @@ describe("parseLink", () => {
         platform: "facetime",
         to: opts.to,
         mode: "audio",
+        prompt: false,
       });
     });
 
@@ -209,6 +231,29 @@ describe("parseLink", () => {
         platform: "facetime",
         to: opts.to,
         mode: "video",
+        prompt: false,
+      });
+    });
+
+    it("FaceTime video prompt, phone", () => {
+      const opts = { to: "+14155551234", mode: "video" as const, prompt: true };
+      const built = createFaceTimeLink(opts);
+      expect(parseLink(built)).toEqual({
+        platform: "facetime",
+        to: opts.to,
+        mode: "video",
+        prompt: true,
+      });
+    });
+
+    it("FaceTime audio prompt, email", () => {
+      const opts = { to: "user@icloud.com", mode: "audio" as const, prompt: true };
+      const built = createFaceTimeLink(opts);
+      expect(parseLink(built)).toEqual({
+        platform: "facetime",
+        to: opts.to,
+        mode: "audio",
+        prompt: true,
       });
     });
 

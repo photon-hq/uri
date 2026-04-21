@@ -20,6 +20,12 @@ describe("createLink", () => {
     );
   });
 
+  it("facetime prompt variant via unified dispatcher", () => {
+    expect(
+      createLink({ platform: "facetime", to: "+14155551234", mode: "audio", prompt: true }),
+    ).toBe("facetime-audio-prompt:+14155551234");
+  });
+
   it("whatsapp happy path", () => {
     expect(
       createLink({
