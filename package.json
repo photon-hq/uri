@@ -1,6 +1,6 @@
 {
   "name": "@photon-ai/uri",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Deep link builder for iMessage, SMS, FaceTime, WhatsApp, and Telegram. TypeScript, zero deps.",
   "type": "module",
   "license": "MIT",

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-04-21
+
 ### Added
 
 - `createFaceTimeLink` now accepts a `prompt?: boolean` option. When `true`, the builder emits the `-prompt` scheme variants (`facetime-prompt:` / `facetime-audio-prompt:`) that ask the user to confirm before dialing. Recommended for links embedded on public web pages.
