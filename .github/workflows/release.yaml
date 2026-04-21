@@ -1,0 +1,18 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    uses: photon-hq/buildspace/.github/workflows/typescript-service-release.yaml@main
+    permissions:
+      contents: write
+      pull-requests: read
+    with:
+      service-name: "@photon-ai/uri"
+      build-command: "bun run build"
+    secrets:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
