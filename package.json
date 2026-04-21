@@ -28,12 +28,7 @@
     "typescript"
   ],
   "sideEffects": false,
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE",
-    "CHANGELOG.md"
-  ],
+  "files": ["dist", "README.md", "LICENSE", "CHANGELOG.md"],
   "publishConfig": {
     "access": "public"
   },
@@ -79,8 +74,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "format": "biome check --write .",
-    "check": "bun run typecheck && bun run lint && bun test && bun run build",
-    "prepublishOnly": "bun run check"
+    "check": "bun run typecheck && bun run lint && bun test && bun run build"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

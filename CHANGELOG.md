@@ -24,4 +24,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Tooling
 
 - Tests run on Bun's built-in `bun:test` runner — no Vitest, Jest, or other test-framework dev dependency
-- Added `prepublishOnly` hook that runs `bun run check` (typecheck + lint + tests + build) before any publish
