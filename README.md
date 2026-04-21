@@ -2,7 +2,13 @@
 
 > Generate URI links for iMessage, SMS, FaceTime, WhatsApp, and Telegram. Zero dependencies, fully typed.
 
-A tiny, zero-dependency TypeScript library for generating correct, encoded URI strings that open native messaging apps with pre-filled recipients and message bodies. Perfect for **"text us" buttons**, **deep links from web to mobile**, and **agent integrations** with platforms like [spectrum-ts](https://github.com/photon-hq/spectrum-ts) and [advanced-imessage-kit](https://github.com/photon-hq/advanced-imessage-kit).
+[![npm](https://img.shields.io/npm/v/@photon-ai/uri?label=npm&color=3b82f6)](https://www.npmjs.com/package/@photon-ai/uri)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3b82f6)](https://www.typescriptlang.org/)
+[![dependencies](https://img.shields.io/badge/dependencies-0-3b82f6)](./package.json)
+[![license](https://img.shields.io/badge/license-MIT-3b82f6)](./LICENSE)
+[![Discord](https://img.shields.io/badge/Discord-Join-5865f2?logo=discord&logoColor=white)](https://discord.com/invite/bZd4CMd2H5)
+
+A tiny, zero-dependency TypeScript library for generating correct, encoded URI strings that open native messaging apps with pre-filled recipients and message bodies.
 
 ## Features
 
