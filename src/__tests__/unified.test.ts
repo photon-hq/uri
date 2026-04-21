@@ -57,4 +57,20 @@ describe("createLink", () => {
   it("propagates InvalidPhoneNumberError from sms", () => {
     expect(() => createLink({ platform: "sms", to: "junk" })).toThrowError(InvalidPhoneNumberError);
   });
+
+  it("sms group via unified dispatcher", () => {
+    expect(createLink({ platform: "sms", to: ["+14155551234", "+14155556789"], body: "yo" })).toBe(
+      "sms:+14155551234,+14155556789?body=yo",
+    );
+  });
+
+  it("imessage group via unified dispatcher (phone + email)", () => {
+    expect(
+      createLink({
+        platform: "imessage",
+        to: ["+14155551234", "user@example.com"],
+        body: "hi",
+      }),
+    ).toBe("imessage://+14155551234,user@example.com?body=hi");
+  });
 });

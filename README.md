@@ -65,13 +65,13 @@ assertE164("415-555-1234"); // throws InvalidPhoneNumberError
 
 ### Recipient types per platform
 
-| Platform | Phone | Email | Username | Notes |
-| --- | --- | --- | --- | --- |
-| iMessage | yes | yes | — | |
-| SMS | yes | — | — | Phone only |
-| FaceTime | yes | yes | — | Email works for Apple IDs |
-| WhatsApp | yes | — | — | Strips `+` in URL path |
-| Telegram | yes | — | yes | Pre-filled body only for usernames |
+| Platform | Phone | Email | Username | Group | Notes                                     |
+| ---      | ---   | ---   | ---      | ---   | ---                                       |
+| iMessage | yes   | yes   | —        | yes   | Phones and emails can be mixed in a group |
+| SMS      | yes   | —     | —        | yes   | Phone only; RFC 5724 comma-separated list |
+| FaceTime | yes   | yes   | —        | —     | Email works for Apple IDs                 |
+| WhatsApp | yes   | —     | —        | —     | Strips `+` in URL path                    |
+| Telegram | yes   | —     | yes      | —     | Pre-filled body only for usernames        |
 
 ### Platform quirks
 
@@ -79,6 +79,7 @@ assertE164("415-555-1234"); // throws InvalidPhoneNumberError
 - **WhatsApp** strips the `+` from phone numbers in the URL; you still pass E.164 with `+` in options.
 - **Telegram** phone links (`t.me/+...`) do not support pre-filled message text; only username links support `body`.
 - **SMS** URIs follow RFC 5724 (`sms:+phone?body=text`), not iOS-specific variants.
+- **Groups** are supported for iMessage and SMS only. Pass `to` as an array; duplicates dedupe after normalization. A single-element array produces the same output as the string form.
 
 ### Body encoding
 
@@ -97,7 +98,7 @@ decodeBody(encodeBody("a\nb\nc")); // "a\nb\nc"
 
 > Example: [imessage.ts](examples/imessage.ts)
 
-Builds `imessage://` URIs. Supports both phone numbers (E.164) and email addresses as recipients.
+Builds `imessage://` URIs. Supports both phone numbers (E.164) and email addresses as recipients, including a mixed group of recipients.
 
 ```ts
 import { createIMessageLink } from "@photon-ai/uri";
@@ -110,14 +111,21 @@ createIMessageLink({ to: "+14155551234", body: "hi 👋" });
 
 createIMessageLink({ to: "user@example.com", body: "hello" });
 // imessage://user@example.com?body=hello
+
+// Group — phones and emails can be mixed
+createIMessageLink({
+  to: ["+14155551234", "+14155556789", "user@example.com"],
+  body: "standup at 3",
+});
+// imessage://+14155551234,+14155556789,user@example.com?body=standup%20at%203
 ```
 
 **Options**
 
-| Field | Type | Required | Description |
-| --- | --- | --- | --- |
-| `to` | `string` | yes | Phone (E.164) or email |
-| `body` | `string` | no | Pre-filled message text |
+| Field  | Type                 | Required | Description                                                                                                         |
+| ---    | ---                  | ---      | ---                                                                                                                 |
+| `to`   | `string \| string[]` | yes      | One recipient, or a list. Each element is a phone (E.164) or email. Duplicates dedupe after normalization.          |
+| `body` | `string`             | no       | Pre-filled message text                                                                                             |
 
 ---
 
@@ -125,7 +133,7 @@ createIMessageLink({ to: "user@example.com", body: "hello" });
 
 > Example: [sms.ts](examples/sms.ts)
 
-Builds RFC 5724 `sms:` URIs. Recipients must be E.164 phone numbers.
+Builds RFC 5724 `sms:` URIs. Recipients must be E.164 phone numbers. Multiple recipients are supported per RFC 5724 via a comma-separated list.
 
 ```ts
 import { createSmsLink } from "@photon-ai/uri";
@@ -135,14 +143,18 @@ createSmsLink({ to: "+14155551234" });
 
 createSmsLink({ to: "+14155551234", body: "Hello" });
 // sms:+14155551234?body=Hello
+
+// Group — RFC 5724 comma-separated list
+createSmsLink({ to: ["+14155551234", "+14155556789"], body: "yo" });
+// sms:+14155551234,+14155556789?body=yo
 ```
 
 **Options**
 
-| Field | Type | Required | Description |
-| --- | --- | --- | --- |
-| `to` | `string` | yes | E.164 phone |
-| `body` | `string` | no | Pre-filled message text |
+| Field  | Type                 | Required | Description                                                                                   |
+| ---    | ---                  | ---      | ---                                                                                           |
+| `to`   | `string \| string[]` | yes      | One E.164 phone, or a list. Duplicates dedupe after normalization; first-occurrence order preserved. |
+| `body` | `string`             | no       | Pre-filled message text                                                                       |
 
 ---
 
@@ -261,11 +273,16 @@ createLink({ platform: "facetime", to: "+14155551234", mode: "audio" });
 
 `parseLink()` is the inverse of the builders for supported schemes: `imessage://`, `sms:`, `facetime:` / `facetime-audio:` / `facetime-prompt:` / `facetime-audio-prompt:`, `https://wa.me/`, `https://t.me/`, `whatsapp://send`, and `tg://resolve`. It returns a `ParsedLink` discriminated union with `platform`, `to`, optional `body`, and platform-specific fields (`mode` and `prompt` for FaceTime, `variant` for WhatsApp and Telegram).
 
+For iMessage and SMS, `to` is typed as `string | string[]`: a single-recipient URI parses to a plain string (unchanged), and a multi-recipient URI parses to an array in original order.
+
 ```ts
 import { parseLink } from "@photon-ai/uri";
 
 parseLink("sms:+14155551234?body=hello");
 // { platform: "sms", to: "+14155551234", body: "hello" }
+
+parseLink("sms:+14155551234,+14155556789?body=yo");
+// { platform: "sms", to: ["+14155551234", "+14155556789"], body: "yo" }
 
 parseLink("facetime-audio:user@icloud.com");
 // { platform: "facetime", to: "user@icloud.com", mode: "audio", prompt: false }

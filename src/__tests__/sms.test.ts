@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { createSmsLink } from "../sms";
 import { encodeBody } from "../utils/encode";
-import { InvalidPhoneNumberError } from "../utils/errors";
+import { InvalidPhoneNumberError, InvalidRecipientError } from "../utils/errors";
 
 describe("createSmsLink", () => {
   it("happy path with body", () => {
@@ -57,5 +57,61 @@ describe("createSmsLink", () => {
 
   it("throws for empty to", () => {
     expect(() => createSmsLink({ to: "" })).toThrow(InvalidPhoneNumberError);
+  });
+
+  describe("group / multi-recipient", () => {
+    it("single-element array matches the string form", () => {
+      expect(createSmsLink({ to: ["+14155551234"] })).toBe(createSmsLink({ to: "+14155551234" }));
+      expect(createSmsLink({ to: ["+14155551234"] })).toBe("sms:+14155551234");
+    });
+
+    it("joins two recipients with a comma per RFC 5724", () => {
+      expect(createSmsLink({ to: ["+14155551234", "+14155556789"] })).toBe(
+        "sms:+14155551234,+14155556789",
+      );
+    });
+
+    it("joins three recipients in order with body", () => {
+      expect(
+        createSmsLink({
+          to: ["+14155551234", "+14155556789", "+442071838750"],
+          body: "meet at 7",
+        }),
+      ).toBe("sms:+14155551234,+14155556789,+442071838750?body=meet%20at%207");
+    });
+
+    it("normalizes each element independently", () => {
+      expect(createSmsLink({ to: ["+1 (415) 555-1234", "+1-415-555-6789"] })).toBe(
+        "sms:+14155551234,+14155556789",
+      );
+    });
+
+    it("deduplicates after normalization, preserving first-occurrence order", () => {
+      expect(
+        createSmsLink({
+          to: ["+14155556789", "+1 (415) 555-1234", "+14155551234", "+14155556789"],
+        }),
+      ).toBe("sms:+14155556789,+14155551234");
+    });
+
+    it("single-element-array-after-dedup collapses like a string", () => {
+      expect(createSmsLink({ to: ["+14155551234", "+1 (415) 555-1234"] })).toBe("sms:+14155551234");
+    });
+
+    it("throws InvalidRecipientError for empty array", () => {
+      expect(() => createSmsLink({ to: [] })).toThrow(InvalidRecipientError);
+    });
+
+    it("throws InvalidPhoneNumberError on invalid element mid-list", () => {
+      expect(() => createSmsLink({ to: ["+14155551234", "not-a-phone", "+14155556789"] })).toThrow(
+        InvalidPhoneNumberError,
+      );
+    });
+
+    it("still rejects email recipients in any position", () => {
+      expect(() => createSmsLink({ to: ["+14155551234", "user@example.com"] })).toThrow(
+        InvalidPhoneNumberError,
+      );
+    });
   });
 });
