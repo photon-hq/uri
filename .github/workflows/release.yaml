@@ -13,6 +13,4 @@ jobs:
     with:
       service-name: "@photon-ai/uri"
       build-command: "bun run build"
-    secrets:
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    secrets: inherit
