@@ -20,6 +20,22 @@ console.log(createSmsLink({ to: "+14155551234", body: "a\nb\nc" }));
 console.log(createSmsLink({ to: "+14155551234", body: "&?=#+/!*'()" }));
 // sms:+14155551234?body=%26%3F%3D%23%2B%2F%21%2A%27%28%29
 
+// Group / multi-recipient (RFC 5724 comma-separated list)
+console.log(createSmsLink({ to: ["+14155551234", "+14155556789"] }));
+// sms:+14155551234,+14155556789
+
+console.log(
+  createSmsLink({
+    to: ["+14155551234", "+14155556789", "+442071838750"],
+    body: "meet at 7",
+  }),
+);
+// sms:+14155551234,+14155556789,+442071838750?body=meet%20at%207
+
+// Duplicates are stripped after normalization (first occurrence wins)
+console.log(createSmsLink({ to: ["+14155551234", "+1 (415) 555-1234"] }));
+// sms:+14155551234
+
 // Error handling: SMS is phone-only (E.164)
 try {
   createSmsLink({ to: "user@example.com" });

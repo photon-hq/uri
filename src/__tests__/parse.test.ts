@@ -31,11 +31,41 @@ describe("parseLink", () => {
       });
     });
 
+    it("parses imessage group (two phones)", () => {
+      expect(parseLink("imessage://+14155551234,+14155556789?body=hi")).toEqual({
+        platform: "imessage",
+        to: ["+14155551234", "+14155556789"],
+        body: "hi",
+      });
+    });
+
+    it("parses imessage group (phone + email)", () => {
+      expect(parseLink("imessage://+14155551234,user@example.com")).toEqual({
+        platform: "imessage",
+        to: ["+14155551234", "user@example.com"],
+      });
+    });
+
     it("parses sms", () => {
       expect(parseLink("sms:+14155551234?body=hello")).toEqual({
         platform: "sms",
         to: "+14155551234",
         body: "hello",
+      });
+    });
+
+    it("parses sms group (two recipients)", () => {
+      expect(parseLink("sms:+14155551234,+14155556789?body=yo")).toEqual({
+        platform: "sms",
+        to: ["+14155551234", "+14155556789"],
+        body: "yo",
+      });
+    });
+
+    it("parses sms group (three recipients, no body)", () => {
+      expect(parseLink("sms:+14155551234,+14155556789,+442071838750")).toEqual({
+        platform: "sms",
+        to: ["+14155551234", "+14155556789", "+442071838750"],
       });
     });
 
@@ -384,6 +414,51 @@ describe("parseLink", () => {
         platform: "sms",
         to: opts.to,
         body: opts.body,
+      });
+    });
+
+    it("round-trip SMS group (two recipients, no body)", () => {
+      const opts = { to: ["+14155551234", "+14155556789"] } as const;
+      const built = createSmsLink({ to: [...opts.to] });
+      expect(parseLink(built)).toEqual({
+        platform: "sms",
+        to: [...opts.to],
+      });
+    });
+
+    it("round-trip SMS group (three recipients, with body)", () => {
+      const opts = {
+        to: ["+14155551234", "+14155556789", "+442071838750"],
+        body: "meet at 7",
+      } as const;
+      const built = createSmsLink({ to: [...opts.to], body: opts.body });
+      expect(parseLink(built)).toEqual({
+        platform: "sms",
+        to: [...opts.to],
+        body: opts.body,
+      });
+    });
+
+    it("round-trip iMessage group (phone + email, with body)", () => {
+      const opts = {
+        to: ["+14155551234", "user@example.com"],
+        body: "yo 👋",
+      } as const;
+      const built = createIMessageLink({ to: [...opts.to], body: opts.body });
+      expect(parseLink(built)).toEqual({
+        platform: "imessage",
+        to: [...opts.to],
+        body: opts.body,
+      });
+    });
+
+    it("round-trip collapse: two dupes normalize → single string (SMS)", () => {
+      const built = createSmsLink({
+        to: ["+14155551234", "+1 (415) 555-1234"],
+      });
+      expect(parseLink(built)).toEqual({
+        platform: "sms",
+        to: "+14155551234",
       });
     });
 

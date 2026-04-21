@@ -2,8 +2,8 @@ import { decodeBody } from "./utils/encode";
 import { UnrecognizedLinkError } from "./utils/errors";
 
 export type ParsedLink =
-  | { platform: "imessage"; to: string; body?: string }
-  | { platform: "sms"; to: string; body?: string }
+  | { platform: "imessage"; to: string | string[]; body?: string }
+  | { platform: "sms"; to: string | string[]; body?: string }
   | { platform: "facetime"; to: string; mode: "video" | "audio"; prompt: boolean }
   | { platform: "whatsapp"; to: string; body?: string; variant: "universal" | "scheme" }
   | { platform: "telegram"; to: string; body?: string; variant: "universal" | "scheme" };
@@ -35,6 +35,22 @@ function decodeRecipientSegment(s: string): string {
   }
 }
 
+/**
+ * Splits a comma-separated recipient list from a URI path and returns either
+ * a single string (when there is exactly one recipient) or an array (two or
+ * more). Empty segments are dropped.
+ */
+function parseRecipientList(raw: string): string | string[] {
+  const parts = raw
+    .split(",")
+    .map((s) => decodeRecipientSegment(s.trim()))
+    .filter((s) => s !== "");
+  if (parts.length === 1) {
+    return parts[0] as string;
+  }
+  return parts;
+}
+
 function throwUnrecognized(uri: string): never {
   throw new UnrecognizedLinkError(uri);
 }
@@ -53,10 +69,13 @@ export function parseLink(uri: string): ParsedLink {
     if (rawRecipient === "") {
       throwUnrecognized(uri);
     }
-    const to = decodeRecipientSegment(rawRecipient);
+    const to = parseRecipientList(rawRecipient);
+    if (Array.isArray(to) ? to.length === 0 : to === "") {
+      throwUnrecognized(uri);
+    }
     const query = qIdx === -1 ? "" : rest.slice(qIdx + 1);
     const body = optionalBodyFromQuery(query, "body");
-    const out: { platform: "imessage"; to: string; body?: string } = {
+    const out: { platform: "imessage"; to: string | string[]; body?: string } = {
       platform: "imessage",
       to,
     };
@@ -73,14 +92,17 @@ export function parseLink(uri: string): ParsedLink {
   if (lower.startsWith("sms:")) {
     const rest = trimmed.slice(4);
     const qIdx = rest.indexOf("?");
-    const rawPhone = qIdx === -1 ? rest : rest.slice(0, qIdx);
-    if (rawPhone === "") {
+    const rawPhones = qIdx === -1 ? rest : rest.slice(0, qIdx);
+    if (rawPhones === "") {
       throwUnrecognized(uri);
     }
-    const to = decodeRecipientSegment(rawPhone);
+    const to = parseRecipientList(rawPhones);
+    if (Array.isArray(to) ? to.length === 0 : to === "") {
+      throwUnrecognized(uri);
+    }
     const query = qIdx === -1 ? "" : rest.slice(qIdx + 1);
     const body = optionalBodyFromQuery(query, "body");
-    const out: { platform: "sms"; to: string; body?: string } = {
+    const out: { platform: "sms"; to: string | string[]; body?: string } = {
       platform: "sms",
       to,
     };
