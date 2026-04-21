@@ -75,7 +75,7 @@ assertE164("415-555-1234"); // throws InvalidPhoneNumberError
 
 ### Platform quirks
 
-- **FaceTime** has no body support. Pass `mode: "audio"` for audio calls.
+- **FaceTime** has no body support. Pass `mode: "audio"` for audio calls, and `prompt: true` to use the `-prompt` scheme variants that ask for confirmation before dialing.
 - **WhatsApp** strips the `+` from phone numbers in the URL; you still pass E.164 with `+` in options.
 - **Telegram** phone links (`t.me/+...`) do not support pre-filled message text; only username links support `body`.
 - **SMS** URIs follow RFC 5724 (`sms:+phone?body=text`), not iOS-specific variants.
@@ -163,6 +163,13 @@ createFaceTimeLink({ to: "+14155551234", mode: "audio" });
 
 createFaceTimeLink({ to: "user@icloud.com", mode: "audio" });
 // facetime-audio:user@icloud.com
+
+// Prompt variants — iOS asks the user to confirm before dialing
+createFaceTimeLink({ to: "+14155551234", prompt: true });
+// facetime-prompt:+14155551234
+
+createFaceTimeLink({ to: "+14155551234", mode: "audio", prompt: true });
+// facetime-audio-prompt:+14155551234
 ```
 
 **Options**
@@ -171,6 +178,7 @@ createFaceTimeLink({ to: "user@icloud.com", mode: "audio" });
 | --- | --- | --- | --- |
 | `to` | `string` | yes | E.164 phone or email |
 | `mode` | `"video" \| "audio"` | no | Defaults to `"video"` |
+| `prompt` | `boolean` | no | Emit the `-prompt` scheme variant that shows a confirmation dialog before dialing. Recommended for public-web-page links. Defaults to `false`. |
 
 ---
 
@@ -251,7 +259,7 @@ createLink({ platform: "facetime", to: "+14155551234", mode: "audio" });
 
 > Example: [parse.ts](examples/parse.ts)
 
-`parseLink()` is the inverse of the builders for supported schemes: `imessage://`, `sms:`, `facetime:` / `facetime-audio:`, `https://wa.me/`, `https://t.me/`, `whatsapp://send`, and `tg://resolve`. It returns a `ParsedLink` discriminated union with `platform`, `to`, optional `body`, and platform-specific fields (`mode` for FaceTime, `variant` for WhatsApp and Telegram).
+`parseLink()` is the inverse of the builders for supported schemes: `imessage://`, `sms:`, `facetime:` / `facetime-audio:` / `facetime-prompt:` / `facetime-audio-prompt:`, `https://wa.me/`, `https://t.me/`, `whatsapp://send`, and `tg://resolve`. It returns a `ParsedLink` discriminated union with `platform`, `to`, optional `body`, and platform-specific fields (`mode` and `prompt` for FaceTime, `variant` for WhatsApp and Telegram).
 
 ```ts
 import { parseLink } from "@photon-ai/uri";
@@ -260,7 +268,10 @@ parseLink("sms:+14155551234?body=hello");
 // { platform: "sms", to: "+14155551234", body: "hello" }
 
 parseLink("facetime-audio:user@icloud.com");
-// { platform: "facetime", to: "user@icloud.com", mode: "audio" }
+// { platform: "facetime", to: "user@icloud.com", mode: "audio", prompt: false }
+
+parseLink("facetime-prompt:+14155551234");
+// { platform: "facetime", to: "+14155551234", mode: "video", prompt: true }
 ```
 
 Round-trips are stable for values produced by the builders: build with a given option object, parse, then build again with the parsed fields and you get the same string where applicable.

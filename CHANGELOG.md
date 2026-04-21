@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `createFaceTimeLink` now accepts a `prompt?: boolean` option. When `true`, the builder emits the `-prompt` scheme variants (`facetime-prompt:` / `facetime-audio-prompt:`) that ask the user to confirm before dialing. Recommended for links embedded on public web pages.
+- `parseLink` recognizes `facetime-prompt:` and `facetime-audio-prompt:` URIs.
+
+### Changed
+
+- `ParsedLink` for `platform: "facetime"` now includes a `prompt: boolean` field. Non-prompt URIs parse with `prompt: false`, prompt variants with `prompt: true`. Round-trips remain stable.
+
 ## [0.1.0] - 2026-04-21
 
 ### Added

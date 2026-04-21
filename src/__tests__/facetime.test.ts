@@ -48,4 +48,43 @@ describe("createFaceTimeLink", () => {
   it("throws for empty to", () => {
     expect(() => createFaceTimeLink({ to: "" })).toThrow(InvalidPhoneNumberError);
   });
+
+  describe("prompt variants", () => {
+    it("emits facetime-prompt: for video + prompt true", () => {
+      expect(createFaceTimeLink({ to: "+14155551234", prompt: true })).toBe(
+        "facetime-prompt:+14155551234",
+      );
+    });
+
+    it("emits facetime-audio-prompt: for audio + prompt true", () => {
+      expect(createFaceTimeLink({ to: "+14155551234", mode: "audio", prompt: true })).toBe(
+        "facetime-audio-prompt:+14155551234",
+      );
+    });
+
+    it("prompt false is identical to omitting the option", () => {
+      const base = createFaceTimeLink({ to: "+14155551234" });
+      const explicit = createFaceTimeLink({ to: "+14155551234", prompt: false });
+      expect(explicit).toBe(base);
+      expect(explicit).toBe("facetime:+14155551234");
+    });
+
+    it("prompt works with email recipients (video)", () => {
+      expect(createFaceTimeLink({ to: "user@icloud.com", prompt: true })).toBe(
+        "facetime-prompt:user@icloud.com",
+      );
+    });
+
+    it("prompt works with email recipients (audio)", () => {
+      expect(createFaceTimeLink({ to: "user@icloud.com", mode: "audio", prompt: true })).toBe(
+        "facetime-audio-prompt:user@icloud.com",
+      );
+    });
+
+    it("normalizes phone input under prompt variant", () => {
+      expect(createFaceTimeLink({ to: "+1 (415) 555-1234", prompt: true })).toBe(
+        "facetime-prompt:+14155551234",
+      );
+    });
+  });
 });
