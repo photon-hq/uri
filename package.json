@@ -1,0 +1,85 @@
+{
+  "name": "@photon-ai/uri",
+  "version": "0.1.0",
+  "description": "Deep link builder for iMessage, SMS, FaceTime, WhatsApp, and Telegram. TypeScript, zero deps.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Photon",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/photon-hq/uri.git"
+  },
+  "bugs": {
+    "url": "https://github.com/photon-hq/uri/issues"
+  },
+  "homepage": "https://github.com/photon-hq/uri#readme",
+  "keywords": [
+    "imessage",
+    "sms",
+    "facetime",
+    "whatsapp",
+    "telegram",
+    "uri",
+    "deeplink",
+    "messaging",
+    "sms-uri",
+    "wa.me",
+    "t.me",
+    "typescript"
+  ],
+  "sideEffects": false,
+  "files": ["dist", "README.md", "LICENSE", "CHANGELOG.md"],
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./sms": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./imessage": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./facetime": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./whatsapp": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./telegram": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "check": "bun run typecheck && bun run lint && bun test && bun run build"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/bun": "^1.1.14",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}
