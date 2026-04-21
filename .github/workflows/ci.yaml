@@ -18,8 +18,3 @@ jobs:
       - run: bun run lint
       - run: bun test
       - run: bun run build
-
-  check-readme:
-    if: github.event_name == 'pull_request'
-    uses: photon-hq/buildspace/.github/workflows/check-readme.yaml@main
-    secrets: inherit

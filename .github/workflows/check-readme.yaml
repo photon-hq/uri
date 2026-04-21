@@ -1,0 +1,9 @@
+name: Check README
+
+on:
+  pull_request:
+
+jobs:
+  check-readme:
+    uses: photon-hq/buildspace/.github/workflows/check-readme.yaml@main
+    secrets: inherit
