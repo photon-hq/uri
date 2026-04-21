@@ -21,9 +21,6 @@ A tiny, zero-dependency TypeScript library for generating correct, encoded URI s
 | [Telegram link](#telegram) | Build `t.me` universal or `tg://` scheme link | `createTelegramLink()` | [telegram.ts](examples/telegram.ts) |
 | [Unified dispatcher](#unified-dispatcher) | One function for all platforms via a discriminated union | `createLink()` | [unified.ts](examples/unified.ts) |
 | [Parse URIs back](#parsing-uris) | Reverse operation: any supported URI to `{ platform, to, body, ... }` | `parseLink()` | [parse.ts](examples/parse.ts) |
-| [E.164 normalization](#phone-numbers) | Strict phone normalization + validation | `assertE164()` | — |
-| [Body encoding](#body-encoding) | RFC 3986-compliant query body encoder | `encodeBody()` | — |
-| [Typed errors](#error-handling) | `instanceof`-friendly error classes | `MessageUriError` | — |
 
 ---
 
