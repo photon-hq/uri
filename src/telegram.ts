@@ -7,15 +7,17 @@ import {
 import { assertE164, isE164 } from "./utils/phone";
 
 const USERNAME_RE = /^[a-zA-Z][a-zA-Z0-9_]{4,31}$/;
+const DIGITS_ONLY_RE = /^[0-9]+$/;
+const LEADING_AT_RE = /^@+/;
 
 export interface TelegramLinkOptions {
-  to: string;
   body?: string;
+  to: string;
   variant?: "universal" | "scheme";
 }
 
 function isDigitOnly(s: string): boolean {
-  return s.length > 0 && /^[0-9]+$/.test(s);
+  return s.length > 0 && DIGITS_ONLY_RE.test(s);
 }
 
 function parseRecipient(
@@ -38,7 +40,7 @@ function parseRecipient(
     return { kind: "phone", e164: assertE164(trimmed) };
   }
 
-  const username = trimmed.replace(/^@+/, "");
+  const username = trimmed.replace(LEADING_AT_RE, "");
   if (!USERNAME_RE.test(username)) {
     throw new InvalidRecipientError(
       to,

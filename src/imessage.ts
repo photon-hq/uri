@@ -4,6 +4,7 @@ import { InvalidRecipientError } from "./utils/errors";
 import { assertE164 } from "./utils/phone";
 
 export interface IMessageLinkOptions {
+  body?: string;
   /**
    * A single recipient or a list of recipients. Each recipient must be
    * either an E.164 phone number or an email address (Apple ID).
@@ -14,7 +15,6 @@ export interface IMessageLinkOptions {
    * may be mixed in the same list.
    */
   to: string | string[];
-  body?: string;
 }
 
 function normalizeRecipient(input: string): string {
