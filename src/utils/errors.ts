@@ -25,6 +25,7 @@ export class InvalidPhoneNumberError extends MessageUriError {
 
 export class InvalidRecipientError extends MessageUriError {
   readonly input: string;
+  readonly reason?: string;
 
   constructor(input: string, reason?: string) {
     const msg =
@@ -34,6 +35,7 @@ export class InvalidRecipientError extends MessageUriError {
     super(msg);
     this.name = "InvalidRecipientError";
     this.input = input;
+    this.reason = reason;
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
@@ -57,6 +59,7 @@ export class UnsupportedFeatureError extends MessageUriError {
 
 export class UnrecognizedLinkError extends MessageUriError {
   readonly input: string;
+  readonly reason?: string;
 
   constructor(input: string, reason?: string) {
     const msg =
@@ -66,6 +69,7 @@ export class UnrecognizedLinkError extends MessageUriError {
     super(msg);
     this.name = "UnrecognizedLinkError";
     this.input = input;
+    this.reason = reason;
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }
