@@ -2,7 +2,6 @@ import { assertEmail } from "./utils/email";
 import { assertE164 } from "./utils/phone";
 
 export interface FaceTimeLinkOptions {
-  to: string;
   mode?: "video" | "audio";
   /**
    * When `true`, emits the `-prompt` scheme variant (`facetime-prompt:` or
@@ -13,6 +12,7 @@ export interface FaceTimeLinkOptions {
    * @default false
    */
   prompt?: boolean;
+  to: string;
 }
 
 function resolveRecipient(to: string): string {

@@ -1,8 +1,8 @@
-import { type FaceTimeLinkOptions, createFaceTimeLink } from "./facetime";
-import { type IMessageLinkOptions, createIMessageLink } from "./imessage";
-import { type SmsLinkOptions, createSmsLink } from "./sms";
-import { type TelegramLinkOptions, createTelegramLink } from "./telegram";
-import { type WhatsAppLinkOptions, createWhatsAppLink } from "./whatsapp";
+import { createFaceTimeLink, type FaceTimeLinkOptions } from "./facetime";
+import { createIMessageLink, type IMessageLinkOptions } from "./imessage";
+import { createSmsLink, type SmsLinkOptions } from "./sms";
+import { createTelegramLink, type TelegramLinkOptions } from "./telegram";
+import { createWhatsAppLink, type WhatsAppLinkOptions } from "./whatsapp";
 
 export type CreateLinkOptions =
   | ({ platform: "imessage" } & IMessageLinkOptions)

@@ -3,6 +3,7 @@ import { InvalidRecipientError } from "./utils/errors";
 import { assertE164 } from "./utils/phone";
 
 export interface SmsLinkOptions {
+  body?: string;
   /**
    * A single recipient or a list of recipients. Each recipient must be an
    * E.164 phone number (`+` and country code + subscriber digits).
@@ -12,7 +13,6 @@ export interface SmsLinkOptions {
    * stripped while preserving first-occurrence order.
    */
   to: string | string[];
-  body?: string;
 }
 
 function normalizeRecipients(to: string | string[]): string[] {

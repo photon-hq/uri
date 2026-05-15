@@ -9,20 +9,23 @@ export type ParsedLink =
   | { platform: "telegram"; to: string; body?: string; variant: "universal" | "scheme" };
 
 const IMESSAGE_PREFIX = /^imessage:\/\//i;
+const LEADING_SLASH_RE = /^\//;
+const DIGITS_ONLY_RE = /^[0-9]+$/;
+const PLUS_DIGITS_RE = /^\+[0-9]+$/;
 
 function optionalBodyFromQuery(query: string, key: "body" | "text"): string | undefined {
   if (!query) {
-    return undefined;
+    return;
   }
   const q = query.startsWith("?") ? query : `?${query}`;
   const params = new URLSearchParams(q);
   const raw = params.get(key);
   if (raw === null || raw === "") {
-    return undefined;
+    return;
   }
   const decoded = decodeBody(raw);
   if (decoded.trim() === "") {
-    return undefined;
+    return;
   }
   return decoded;
 }
@@ -154,8 +157,8 @@ export function parseLink(uri: string): ParsedLink {
   if (url.protocol === "https:") {
     const host = url.hostname.toLowerCase();
     if (host === "wa.me") {
-      const raw = url.pathname.replace(/^\//, "");
-      if (raw === "" || !/^[0-9]+$/.test(raw)) {
+      const raw = url.pathname.replace(LEADING_SLASH_RE, "");
+      if (raw === "" || !DIGITS_ONLY_RE.test(raw)) {
         throwUnrecognized(uri);
       }
       const text = optionalBodyFromQuery(url.search, "text");
@@ -180,7 +183,7 @@ export function parseLink(uri: string): ParsedLink {
       if (path === "" || path === "/") {
         throwUnrecognized(uri);
       }
-      const segment = path.replace(/^\//, "");
+      const segment = path.replace(LEADING_SLASH_RE, "");
       if (segment.includes("/")) {
         throwUnrecognized(uri);
       }
@@ -188,7 +191,7 @@ export function parseLink(uri: string): ParsedLink {
       if (decoded === "") {
         throwUnrecognized(uri);
       }
-      if (decoded.startsWith("+") && !/^\+[0-9]+$/.test(decoded)) {
+      if (decoded.startsWith("+") && !PLUS_DIGITS_RE.test(decoded)) {
         throwUnrecognized(uri);
       }
       const to = decoded;

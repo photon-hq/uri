@@ -12,9 +12,9 @@ export class InvalidPhoneNumberError extends MessageUriError {
 
   constructor(input: string, reason?: string) {
     const msg =
-      reason !== undefined
-        ? `Invalid phone number: ${JSON.stringify(input)} (${reason})`
-        : `Invalid phone number: ${JSON.stringify(input)}`;
+      reason === undefined
+        ? `Invalid phone number: ${JSON.stringify(input)}`
+        : `Invalid phone number: ${JSON.stringify(input)} (${reason})`;
     super(msg);
     this.name = "InvalidPhoneNumberError";
     this.input = input;
@@ -28,9 +28,9 @@ export class InvalidRecipientError extends MessageUriError {
 
   constructor(input: string, reason?: string) {
     const msg =
-      reason !== undefined
-        ? `Invalid recipient: ${JSON.stringify(input)} (${reason})`
-        : `Invalid recipient: ${JSON.stringify(input)}`;
+      reason === undefined
+        ? `Invalid recipient: ${JSON.stringify(input)}`
+        : `Invalid recipient: ${JSON.stringify(input)} (${reason})`;
     super(msg);
     this.name = "InvalidRecipientError";
     this.input = input;
@@ -44,9 +44,9 @@ export class UnsupportedFeatureError extends MessageUriError {
 
   constructor(feature: string, platform?: string) {
     const msg =
-      platform !== undefined
-        ? `Unsupported feature ${JSON.stringify(feature)} on ${platform}`
-        : `Unsupported feature ${JSON.stringify(feature)}`;
+      platform === undefined
+        ? `Unsupported feature ${JSON.stringify(feature)}`
+        : `Unsupported feature ${JSON.stringify(feature)} on ${platform}`;
     super(msg);
     this.name = "UnsupportedFeatureError";
     this.feature = feature;
@@ -60,9 +60,9 @@ export class UnrecognizedLinkError extends MessageUriError {
 
   constructor(input: string, reason?: string) {
     const msg =
-      reason !== undefined
-        ? `Unrecognized link: ${JSON.stringify(input)} (${reason})`
-        : `Unrecognized link: ${JSON.stringify(input)}`;
+      reason === undefined
+        ? `Unrecognized link: ${JSON.stringify(input)}`
+        : `Unrecognized link: ${JSON.stringify(input)} (${reason})`;
     super(msg);
     this.name = "UnrecognizedLinkError";
     this.input = input;

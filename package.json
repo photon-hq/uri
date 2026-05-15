@@ -1,8 +1,25 @@
 {
+  "devDependencies": {
+    "@biomejs/biome": "2.4.15",
+    "@types/bun": "^1.1.14",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "ultracite": "7.7.0"
+  },
   "name": "@photon-ai/uri",
   "version": "0.2.1",
-  "description": "Deep link builder for iMessage, SMS, FaceTime, WhatsApp, and Telegram. TypeScript, zero deps.",
   "type": "module",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit",
+    "lint": "ultracite check",
+    "format": "ultracite fix",
+    "check": "bun run typecheck && bun run lint && bun test && bun run build",
+    "fix": "ultracite fix"
+  },
+  "description": "Deep link builder for iMessage, SMS, FaceTime, WhatsApp, and Telegram. TypeScript, zero deps.",
   "license": "MIT",
   "author": "Photon",
   "repository": {
@@ -71,20 +88,5 @@
       "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     }
-  },
-  "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
-    "test": "bun test",
-    "typecheck": "tsc --noEmit",
-    "lint": "biome check .",
-    "format": "biome check --write .",
-    "check": "bun run typecheck && bun run lint && bun test && bun run build"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@types/bun": "^1.1.14",
-    "tsup": "^8.3.5",
-    "typescript": "^5.7.2"
   }
 }

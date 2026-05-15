@@ -2,8 +2,8 @@ import { encodeBody } from "./utils/encode";
 import { assertE164 } from "./utils/phone";
 
 export interface WhatsAppLinkOptions {
-  to: string;
   body?: string;
+  to: string;
   variant?: "universal" | "scheme";
 }
 
