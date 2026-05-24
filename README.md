@@ -33,6 +33,8 @@ bun add @photon-ai/uri
 npm install @photon-ai/uri
 ```
 
+Subpaths such as `@photon-ai/uri/sms` are aliases to the main entry (same bundle, no per-platform tree-shaking).
+
 ### Basic usage
 
 ```ts

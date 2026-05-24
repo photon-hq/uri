@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-04-21
+
+### Changed
+
+- Upgraded to Biome 2 and [Ultracite](https://www.ultracite.ai/) for lint/format (`bun run lint`, `bun run fix`, `bun run check`).
+- `InvalidRecipientError` and `UnrecognizedLinkError` now expose optional `reason` fields, matching `InvalidPhoneNumberError`.
+
+### Tooling
+
+- Added `AGENTS.md` and `.vscode/settings.json` for editor/agent conventions.
+
 ## [0.2.0] - 2026-04-21
 
 ### Added
