@@ -22,4 +22,13 @@ describe("typed errors", () => {
     expect(new UnsupportedFeatureError("body", "sms").name).toBe("UnsupportedFeatureError");
     expect(new UnrecognizedLinkError("x").name).toBe("UnrecognizedLinkError");
   });
+
+  it("exposes optional reason on phone, recipient, and link errors", () => {
+    expect(new InvalidPhoneNumberError("+x", "bad format").reason).toBe("bad format");
+    expect(new InvalidPhoneNumberError("+x").reason).toBeUndefined();
+    expect(new InvalidRecipientError("x", "not an email").reason).toBe("not an email");
+    expect(new InvalidRecipientError("x").reason).toBeUndefined();
+    expect(new UnrecognizedLinkError("x", "unknown scheme").reason).toBe("unknown scheme");
+    expect(new UnrecognizedLinkError("x").reason).toBeUndefined();
+  });
 });
