@@ -4,13 +4,13 @@ import { InvalidPhoneNumberError } from "../utils/errors";
 import { createWhatsAppLink } from "../whatsapp";
 
 describe("createWhatsAppLink", () => {
-  it("default (universal) with body", () => {
+  it("with body", () => {
     expect(createWhatsAppLink({ to: "+14155551234", body: "Hello" })).toBe(
       "https://wa.me/14155551234?text=Hello",
     );
   });
 
-  it("default (universal) no body", () => {
+  it("no body", () => {
     expect(createWhatsAppLink({ to: "+14155551234" })).toBe("https://wa.me/14155551234");
   });
 
@@ -18,31 +18,6 @@ describe("createWhatsAppLink", () => {
     expect(createWhatsAppLink({ to: "+1 (415) 555-1234", body: "hello" })).toBe(
       "https://wa.me/14155551234?text=hello",
     );
-  });
-
-  it("scheme variant with body", () => {
-    expect(createWhatsAppLink({ to: "+14155551234", body: "hi", variant: "scheme" })).toBe(
-      "whatsapp://send?phone=14155551234&text=hi",
-    );
-  });
-
-  it("scheme variant no body (still has phone param)", () => {
-    expect(createWhatsAppLink({ to: "+14155551234", variant: "scheme" })).toBe(
-      "whatsapp://send?phone=14155551234",
-    );
-  });
-
-  it("explicit universal variant", () => {
-    expect(createWhatsAppLink({ to: "+14155551234", variant: "universal" })).toBe(
-      "https://wa.me/14155551234",
-    );
-    expect(
-      createWhatsAppLink({
-        to: "+14155551234",
-        body: "x",
-        variant: "universal",
-      }),
-    ).toBe("https://wa.me/14155551234?text=x");
   });
 
   it("encodes body with emoji", () => {

@@ -17,7 +17,7 @@ A tiny, zero-dependency TypeScript library for generating correct, encoded URI s
 | [iMessage link](#imessage) | Build an `imessage://` URI for phone or email | `createIMessageLink()` | [imessage.ts](examples/imessage.ts) |
 | [SMS link](#sms) | Build an RFC 5724 `sms:` URI | `createSmsLink()` | [sms.ts](examples/sms.ts) |
 | [FaceTime link](#facetime) | Build `facetime:` / `facetime-audio:` URI | `createFaceTimeLink()` | [facetime.ts](examples/facetime.ts) |
-| [WhatsApp link](#whatsapp) | Build `wa.me` universal or `whatsapp://` scheme link | `createWhatsAppLink()` | [whatsapp.ts](examples/whatsapp.ts) |
+| [WhatsApp link](#whatsapp) | Build official `https://wa.me/` links | `createWhatsAppLink()` | [whatsapp.ts](examples/whatsapp.ts) |
 | [Telegram link](#telegram) | Build `t.me` universal or `tg://` scheme link | `createTelegramLink()` | [telegram.ts](examples/telegram.ts) |
 | [Unified dispatcher](#unified-dispatcher) | One function for all platforms via a discriminated union | `createLink()` | [unified.ts](examples/unified.ts) |
 | [Parse URIs back](#parsing-uris) | Reverse operation: any supported URI to `{ platform, to, body, ... }` | `parseLink()` | [parse.ts](examples/parse.ts) |
@@ -77,7 +77,7 @@ assertE164("415-555-1234"); // throws InvalidPhoneNumberError
 
 ### Platform quirks
 
-- **FaceTime** has no body support. Pass `mode: "audio"` for audio calls, and `prompt: true` to use the `-prompt` scheme variants that ask for confirmation before dialing.
+- **FaceTime** has no body support. Pass `mode: "audio"` for audio calls. Pass `prompt: true` to use `-prompt` schemes on **iOS** (confirmation before dialing in web contexts). On **macOS**, where those schemes have no handler, the library falls back to `facetime:` / `facetime-audio:` (macOS already prompts for those).
 - **WhatsApp** strips the `+` from phone numbers in the URL; you still pass E.164 with `+` in options.
 - **Telegram** phone links (`t.me/+...`) do not support pre-filled message text; only username links support `body`.
 - **SMS** URIs follow RFC 5724 (`sms:+phone?body=text`), not iOS-specific variants.
@@ -178,12 +178,11 @@ createFaceTimeLink({ to: "+14155551234", mode: "audio" });
 createFaceTimeLink({ to: "user@icloud.com", mode: "audio" });
 // facetime-audio:user@icloud.com
 
-// Prompt variants — iOS asks the user to confirm before dialing
+// Prompt — on iOS: facetime-prompt:+14155551234; on macOS: facetime:+14155551234
 createFaceTimeLink({ to: "+14155551234", prompt: true });
-// facetime-prompt:+14155551234
 
 createFaceTimeLink({ to: "+14155551234", mode: "audio", prompt: true });
-// facetime-audio-prompt:+14155551234
+// macOS: facetime-audio:+14155551234
 ```
 
 **Options**
@@ -192,7 +191,7 @@ createFaceTimeLink({ to: "+14155551234", mode: "audio", prompt: true });
 | --- | --- | --- | --- |
 | `to` | `string` | yes | E.164 phone or email |
 | `mode` | `"video" \| "audio"` | no | Defaults to `"video"` |
-| `prompt` | `boolean` | no | Emit the `-prompt` scheme variant that shows a confirmation dialog before dialing. Recommended for public-web-page links. Defaults to `false`. |
+| `prompt` | `boolean` | no | On iOS, emit `-prompt` scheme variants for web links. On macOS, falls back to standard schemes (which already prompt). Defaults to `false`. |
 
 ---
 
@@ -200,16 +199,13 @@ createFaceTimeLink({ to: "+14155551234", mode: "audio", prompt: true });
 
 > Example: [whatsapp.ts](examples/whatsapp.ts)
 
-Builds `https://wa.me/...` (universal) or `whatsapp://send?...` (scheme) links. Phone numbers are normalized to E.164 in options; the `+` is omitted in the generated path or `phone` query value.
+Builds official [WhatsApp `wa.me`](https://faq.whatsapp.com/425247423114725) links. Phone numbers are normalized to E.164 in options; the `+` is omitted in the URL path. Legacy `whatsapp://` URLs are still parsed by `parseLink()` but are not generated.
 
 ```ts
 import { createWhatsAppLink } from "@photon-ai/uri";
 
 createWhatsAppLink({ to: "+14155551234", body: "Hello" });
 // https://wa.me/14155551234?text=Hello
-
-createWhatsAppLink({ to: "+14155551234", variant: "scheme", body: "hi" });
-// whatsapp://send?phone=14155551234&text=hi
 ```
 
 **Options**
@@ -218,7 +214,6 @@ createWhatsAppLink({ to: "+14155551234", variant: "scheme", body: "hi" });
 | --- | --- | --- | --- |
 | `to` | `string` | yes | E.164 phone |
 | `body` | `string` | no | Pre-filled message text |
-| `variant` | `"universal" \| "scheme"` | no | Defaults to `"universal"` |
 
 ---
 

@@ -20,10 +20,10 @@ describe("createLink", () => {
     );
   });
 
-  it("facetime prompt variant via unified dispatcher", () => {
+  it("facetime prompt falls back on macOS via unified dispatcher", () => {
     expect(
       createLink({ platform: "facetime", to: "+14155551234", mode: "audio", prompt: true }),
-    ).toBe("facetime-audio-prompt:+14155551234");
+    ).toBe("facetime-audio:+14155551234");
   });
 
   it("whatsapp happy path", () => {
@@ -32,9 +32,8 @@ describe("createLink", () => {
         platform: "whatsapp",
         to: "+14155551234",
         body: "hi",
-        variant: "scheme",
       }),
-    ).toBe("whatsapp://send?phone=14155551234&text=hi");
+    ).toBe("https://wa.me/14155551234?text=hi");
   });
 
   it("telegram happy path", () => {
