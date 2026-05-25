@@ -7,4 +7,10 @@ describe("supportsFaceTimePromptScheme", () => {
       expect(supportsFaceTimePromptScheme()).toBe(false);
     }
   });
+
+  it("returns false on Linux runtimes without iOS user agent", () => {
+    if (process.platform === "linux") {
+      expect(supportsFaceTimePromptScheme()).toBe(false);
+    }
+  });
 });
