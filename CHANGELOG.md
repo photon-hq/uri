@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- `createFaceTimeLink({ prompt: true })` now falls back to `facetime:` / `facetime-audio:` on macOS, where `-prompt` schemes have no registered URL handler. iOS still emits `facetime-prompt:` / `facetime-audio-prompt:`.
+- `createWhatsAppLink` always emits official `https://wa.me/` links. The `variant: "scheme"` option and `whatsapp://` output are removed; `parseLink()` still accepts legacy `whatsapp://` input.
+
 ## [0.2.1] - 2026-04-21
 
 ### Changed

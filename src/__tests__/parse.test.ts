@@ -265,30 +265,32 @@ describe("parseLink", () => {
       });
     });
 
-    it("FaceTime video prompt, phone", () => {
+    it("FaceTime video prompt, phone (macOS emits facetime: with prompt intent)", () => {
       const opts = { to: "+14155551234", mode: "video" as const, prompt: true };
       const built = createFaceTimeLink(opts);
+      expect(built).toBe("facetime:+14155551234");
       expect(parseLink(built)).toEqual({
         platform: "facetime",
         to: opts.to,
         mode: "video",
-        prompt: true,
+        prompt: false,
       });
     });
 
-    it("FaceTime audio prompt, email", () => {
+    it("FaceTime audio prompt, email (macOS emits facetime-audio: with prompt intent)", () => {
       const opts = { to: "user@icloud.com", mode: "audio" as const, prompt: true };
       const built = createFaceTimeLink(opts);
+      expect(built).toBe("facetime-audio:user@icloud.com");
       expect(parseLink(built)).toEqual({
         platform: "facetime",
         to: opts.to,
         mode: "audio",
-        prompt: true,
+        prompt: false,
       });
     });
 
     it("WhatsApp universal no body", () => {
-      const opts = { to: "+14155551234", variant: "universal" as const };
+      const opts = { to: "+14155551234" };
       const built = createWhatsAppLink(opts);
       expect(parseLink(built)).toEqual({
         platform: "whatsapp",
@@ -298,11 +300,7 @@ describe("parseLink", () => {
     });
 
     it("WhatsApp universal with body", () => {
-      const opts = {
-        to: "+14155551234",
-        body: "hi there",
-        variant: "universal" as const,
-      };
+      const opts = { to: "+14155551234", body: "hi there" };
       const built = createWhatsAppLink(opts);
       expect(parseLink(built)).toEqual({
         platform: "whatsapp",
@@ -312,29 +310,33 @@ describe("parseLink", () => {
       });
     });
 
-    it("WhatsApp scheme no body", () => {
-      const opts = { to: "+14155551234", variant: "scheme" as const };
-      const built = createWhatsAppLink(opts);
-      expect(parseLink(built)).toEqual({
+    it("WhatsApp scheme input normalizes to wa.me on rebuild", () => {
+      const parsed = parseLink("whatsapp://send?phone=14155551234");
+      expect(parsed).toEqual({
         platform: "whatsapp",
-        to: opts.to,
+        to: "+14155551234",
         variant: "scheme",
       });
+      if (parsed.platform !== "whatsapp") {
+        throw new Error("expected whatsapp");
+      }
+      expect(createWhatsAppLink({ to: parsed.to })).toBe("https://wa.me/14155551234");
     });
 
-    it("WhatsApp scheme with body", () => {
-      const opts = {
+    it("WhatsApp scheme with body normalizes to wa.me on rebuild", () => {
+      const parsed = parseLink("whatsapp://send?phone=14155551234&text=hi");
+      expect(parsed).toEqual({
+        platform: "whatsapp",
         to: "+14155551234",
         body: "hi",
-        variant: "scheme" as const,
-      };
-      const built = createWhatsAppLink(opts);
-      expect(parseLink(built)).toEqual({
-        platform: "whatsapp",
-        to: opts.to,
-        body: opts.body,
         variant: "scheme",
       });
+      if (parsed.platform !== "whatsapp") {
+        throw new Error("expected whatsapp");
+      }
+      expect(createWhatsAppLink({ to: parsed.to, body: parsed.body })).toBe(
+        "https://wa.me/14155551234?text=hi",
+      );
     });
 
     it("Telegram username universal no body", () => {

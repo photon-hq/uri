@@ -50,15 +50,15 @@ describe("createFaceTimeLink", () => {
   });
 
   describe("prompt variants", () => {
-    it("emits facetime-prompt: for video + prompt true", () => {
+    it("falls back to facetime: on macOS when prompt is true", () => {
       expect(createFaceTimeLink({ to: "+14155551234", prompt: true })).toBe(
-        "facetime-prompt:+14155551234",
+        "facetime:+14155551234",
       );
     });
 
-    it("emits facetime-audio-prompt: for audio + prompt true", () => {
+    it("falls back to facetime-audio: on macOS when prompt is true", () => {
       expect(createFaceTimeLink({ to: "+14155551234", mode: "audio", prompt: true })).toBe(
-        "facetime-audio-prompt:+14155551234",
+        "facetime-audio:+14155551234",
       );
     });
 
@@ -71,19 +71,19 @@ describe("createFaceTimeLink", () => {
 
     it("prompt works with email recipients (video)", () => {
       expect(createFaceTimeLink({ to: "user@icloud.com", prompt: true })).toBe(
-        "facetime-prompt:user@icloud.com",
+        "facetime:user@icloud.com",
       );
     });
 
     it("prompt works with email recipients (audio)", () => {
       expect(createFaceTimeLink({ to: "user@icloud.com", mode: "audio", prompt: true })).toBe(
-        "facetime-audio-prompt:user@icloud.com",
+        "facetime-audio:user@icloud.com",
       );
     });
 
     it("normalizes phone input under prompt variant", () => {
       expect(createFaceTimeLink({ to: "+1 (415) 555-1234", prompt: true })).toBe(
-        "facetime-prompt:+14155551234",
+        "facetime:+14155551234",
       );
     });
   });
